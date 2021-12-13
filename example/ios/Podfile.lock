@@ -1,0 +1,29 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_txlive_sdk (0.0.1):
+    - Flutter
+    - TXLiteAVSDK_Professional
+  - TXLiteAVSDK_Professional (9.4.10918)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_txlive_sdk (from `.symlinks/plugins/flutter_txlive_sdk/ios`)
+
+SPEC REPOS:
+  trunk:
+    - TXLiteAVSDK_Professional
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_txlive_sdk:
+    :path: ".symlinks/plugins/flutter_txlive_sdk/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_txlive_sdk: dad8c9f25c45b1518a13a48f9f316fc52f2fb15f
+  TXLiteAVSDK_Professional: e04a6e2582dcc5e7d1f57ab54d7ff24d6158d808
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.11.2
