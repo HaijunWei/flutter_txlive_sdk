@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Size;
 import android.view.PixelCopy;
 import android.view.Surface;
 import android.view.View;
@@ -207,21 +208,47 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
         }
     }
 
-    void snapshot(IVideoSnapshotListener listener) {
+    void snapshot(IVideoSnapshotListener listener, Boolean portrait) {
         View cv = activity.getWindow().getDecorView();
-        Bitmap bitmap = Bitmap.createBitmap(cv.getWidth(), cv.getHeight(), Bitmap.Config.ARGB_8888);
+        long time = System.currentTimeMillis();
+        int width = 0;
+        int height = 0;
+        if (portrait) {
+            width = cv.getHeight();
+            height = cv.getWidth();
+        } else {
+            width = cv.getWidth();
+            height = cv.getHeight();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Log.d("Haijun",  "----1   " + (System.currentTimeMillis() - time) + "");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            int finalWidth = width;
+            int finalHeight = height;
             PixelCopy.request(surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
                 @Override
                 public void onPixelCopyFinished(int i) {
+                    Log.d("Haijun",  "----2   " + (System.currentTimeMillis() - time) + "");
                     String filename = "hj_video_player_" + System.currentTimeMillis() + ".png";
                     File file = new File(activity.getCacheDir(), filename);
-                    try {
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
-                        listener.onSnapshot(file.getPath());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
+                                Log.d("Haijun",  "----3   " + (System.currentTimeMillis() - time) + "");
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        listener.onSnapshot(file.getPath(), finalWidth, finalHeight);
+                                    }
+                                });
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }.start();
                 }
             }, new Handler(Looper.getMainLooper()));
         }
@@ -314,6 +341,6 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
     }
 
     public interface IVideoSnapshotListener {
-        void onSnapshot(String path);
+        void onSnapshot(String path, int width, int height);
     }
 }

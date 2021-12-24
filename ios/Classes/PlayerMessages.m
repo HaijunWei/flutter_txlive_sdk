@@ -50,8 +50,16 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 + (HJPositionMessage *)fromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
 @end
+@interface HJBackgroundPlayMessage ()
++ (HJBackgroundPlayMessage *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
 @interface HJSnapshotMessage ()
 + (HJSnapshotMessage *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface HJSnapshotResponseMessage ()
++ (HJSnapshotResponseMessage *)fromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
 @end
 
@@ -179,17 +187,61 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 }
 @end
 
-@implementation HJSnapshotMessage
-+ (HJSnapshotMessage *)fromMap:(NSDictionary *)dict {
-  HJSnapshotMessage *result = [[HJSnapshotMessage alloc] init];
-  result.path = dict[@"path"];
-  if ((NSNull *)result.path == [NSNull null]) {
-    result.path = nil;
+@implementation HJBackgroundPlayMessage
++ (HJBackgroundPlayMessage *)fromMap:(NSDictionary *)dict {
+  HJBackgroundPlayMessage *result = [[HJBackgroundPlayMessage alloc] init];
+  result.textureId = dict[@"textureId"];
+  if ((NSNull *)result.textureId == [NSNull null]) {
+    result.textureId = nil;
+  }
+  result.backgroundPlay = dict[@"backgroundPlay"];
+  if ((NSNull *)result.backgroundPlay == [NSNull null]) {
+    result.backgroundPlay = nil;
   }
   return result;
 }
 - (NSDictionary *)toMap {
-  return [NSDictionary dictionaryWithObjectsAndKeys:(self.path ? self.path : [NSNull null]), @"path", nil];
+  return [NSDictionary dictionaryWithObjectsAndKeys:(self.textureId ? self.textureId : [NSNull null]), @"textureId", (self.backgroundPlay ? self.backgroundPlay : [NSNull null]), @"backgroundPlay", nil];
+}
+@end
+
+@implementation HJSnapshotMessage
++ (HJSnapshotMessage *)fromMap:(NSDictionary *)dict {
+  HJSnapshotMessage *result = [[HJSnapshotMessage alloc] init];
+  result.textureId = dict[@"textureId"];
+  if ((NSNull *)result.textureId == [NSNull null]) {
+    result.textureId = nil;
+  }
+  result.portrait = dict[@"portrait"];
+  if ((NSNull *)result.portrait == [NSNull null]) {
+    result.portrait = nil;
+  }
+  return result;
+}
+- (NSDictionary *)toMap {
+  return [NSDictionary dictionaryWithObjectsAndKeys:(self.textureId ? self.textureId : [NSNull null]), @"textureId", (self.portrait ? self.portrait : [NSNull null]), @"portrait", nil];
+}
+@end
+
+@implementation HJSnapshotResponseMessage
++ (HJSnapshotResponseMessage *)fromMap:(NSDictionary *)dict {
+  HJSnapshotResponseMessage *result = [[HJSnapshotResponseMessage alloc] init];
+  result.path = dict[@"path"];
+  if ((NSNull *)result.path == [NSNull null]) {
+    result.path = nil;
+  }
+  result.width = dict[@"width"];
+  if ((NSNull *)result.width == [NSNull null]) {
+    result.width = nil;
+  }
+  result.height = dict[@"height"];
+  if ((NSNull *)result.height == [NSNull null]) {
+    result.height = nil;
+  }
+  return result;
+}
+- (NSDictionary *)toMap {
+  return [NSDictionary dictionaryWithObjectsAndKeys:(self.path ? self.path : [NSNull null]), @"path", (self.width ? self.width : [NSNull null]), @"width", (self.height ? self.height : [NSNull null]), @"height", nil];
 }
 @end
 
@@ -200,27 +252,33 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 {
   switch (type) {
     case 128:     
-      return [HJCreateMessage fromMap:[self readValue]];
+      return [HJBackgroundPlayMessage fromMap:[self readValue]];
     
     case 129:     
-      return [HJLoopingMessage fromMap:[self readValue]];
+      return [HJCreateMessage fromMap:[self readValue]];
     
     case 130:     
-      return [HJPlayMessage fromMap:[self readValue]];
+      return [HJLoopingMessage fromMap:[self readValue]];
     
     case 131:     
-      return [HJPlaybackSpeedMessage fromMap:[self readValue]];
+      return [HJPlayMessage fromMap:[self readValue]];
     
     case 132:     
-      return [HJPositionMessage fromMap:[self readValue]];
+      return [HJPlaybackSpeedMessage fromMap:[self readValue]];
     
     case 133:     
-      return [HJSnapshotMessage fromMap:[self readValue]];
+      return [HJPositionMessage fromMap:[self readValue]];
     
     case 134:     
-      return [HJTextureMessage fromMap:[self readValue]];
+      return [HJSnapshotMessage fromMap:[self readValue]];
     
     case 135:     
+      return [HJSnapshotResponseMessage fromMap:[self readValue]];
+    
+    case 136:     
+      return [HJTextureMessage fromMap:[self readValue]];
+    
+    case 137:     
       return [HJVolumeMessage fromMap:[self readValue]];
     
     default:    
@@ -235,36 +293,44 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 @implementation HJTencentVideoPlayerApiCodecWriter
 - (void)writeValue:(id)value 
 {
-  if ([value isKindOfClass:[HJCreateMessage class]]) {
+  if ([value isKindOfClass:[HJBackgroundPlayMessage class]]) {
     [self writeByte:128];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJLoopingMessage class]]) {
+  if ([value isKindOfClass:[HJCreateMessage class]]) {
     [self writeByte:129];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJPlayMessage class]]) {
+  if ([value isKindOfClass:[HJLoopingMessage class]]) {
     [self writeByte:130];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJPlaybackSpeedMessage class]]) {
+  if ([value isKindOfClass:[HJPlayMessage class]]) {
     [self writeByte:131];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJPositionMessage class]]) {
+  if ([value isKindOfClass:[HJPlaybackSpeedMessage class]]) {
     [self writeByte:132];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJSnapshotMessage class]]) {
+  if ([value isKindOfClass:[HJPositionMessage class]]) {
     [self writeByte:133];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJTextureMessage class]]) {
+  if ([value isKindOfClass:[HJSnapshotMessage class]]) {
     [self writeByte:134];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[HJVolumeMessage class]]) {
+  if ([value isKindOfClass:[HJSnapshotResponseMessage class]]) {
     [self writeByte:135];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[HJTextureMessage class]]) {
+    [self writeByte:136];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[HJVolumeMessage class]]) {
+    [self writeByte:137];
     [self writeValue:[value toMap]];
   } else 
 {
@@ -479,6 +545,26 @@ void HJTencentVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NS
   {
     FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel
+        messageChannelWithName:@"dev.flutter.pigeon.TencentVideoPlayerApi.setBackgroundPlay"
+        binaryMessenger:binaryMessenger
+        codec:HJTencentVideoPlayerApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setBackgroundPlayMsg:error:)], @"HJTencentVideoPlayerApi api (%@) doesn't respond to @selector(setBackgroundPlayMsg:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        HJBackgroundPlayMessage *arg_msg = args[0];
+        FlutterError *error;
+        [api setBackgroundPlayMsg:arg_msg error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel
         messageChannelWithName:@"dev.flutter.pigeon.TencentVideoPlayerApi.snapshot"
         binaryMessenger:binaryMessenger
         codec:HJTencentVideoPlayerApiGetCodec()];
@@ -486,8 +572,8 @@ void HJTencentVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NS
       NSCAssert([api respondsToSelector:@selector(snapshotMsg:completion:)], @"HJTencentVideoPlayerApi api (%@) doesn't respond to @selector(snapshotMsg:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        HJTextureMessage *arg_msg = args[0];
-        [api snapshotMsg:arg_msg completion:^(HJSnapshotMessage *_Nullable output, FlutterError *_Nullable error) {
+        HJSnapshotMessage *arg_msg = args[0];
+        [api snapshotMsg:arg_msg completion:^(HJSnapshotResponseMessage *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

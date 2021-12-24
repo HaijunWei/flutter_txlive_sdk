@@ -158,19 +158,63 @@ class PositionMessage {
   }
 }
 
-class SnapshotMessage {
-  String? path;
+class BackgroundPlayMessage {
+  int? textureId;
+  bool? backgroundPlay;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
-    pigeonMap['path'] = path;
+    pigeonMap['textureId'] = textureId;
+    pigeonMap['backgroundPlay'] = backgroundPlay;
+    return pigeonMap;
+  }
+
+  static BackgroundPlayMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return BackgroundPlayMessage()
+      ..textureId = pigeonMap['textureId'] as int?
+      ..backgroundPlay = pigeonMap['backgroundPlay'] as bool?;
+  }
+}
+
+class SnapshotMessage {
+  int? textureId;
+  bool? portrait;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['textureId'] = textureId;
+    pigeonMap['portrait'] = portrait;
     return pigeonMap;
   }
 
   static SnapshotMessage decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return SnapshotMessage()
-      ..path = pigeonMap['path'] as String?;
+      ..textureId = pigeonMap['textureId'] as int?
+      ..portrait = pigeonMap['portrait'] as bool?;
+  }
+}
+
+class SnapshotResponseMessage {
+  String? path;
+  int? width;
+  int? height;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['path'] = path;
+    pigeonMap['width'] = width;
+    pigeonMap['height'] = height;
+    return pigeonMap;
+  }
+
+  static SnapshotResponseMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return SnapshotResponseMessage()
+      ..path = pigeonMap['path'] as String?
+      ..width = pigeonMap['width'] as int?
+      ..height = pigeonMap['height'] as int?;
   }
 }
 
@@ -178,36 +222,44 @@ class _TencentVideoPlayerApiCodec extends StandardMessageCodec {
   const _TencentVideoPlayerApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CreateMessage) {
+    if (value is BackgroundPlayMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else 
-    if (value is LoopingMessage) {
+    if (value is CreateMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else 
-    if (value is PlayMessage) {
+    if (value is LoopingMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else 
-    if (value is PlaybackSpeedMessage) {
+    if (value is PlayMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else 
-    if (value is PositionMessage) {
+    if (value is PlaybackSpeedMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else 
-    if (value is SnapshotMessage) {
+    if (value is PositionMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else 
-    if (value is TextureMessage) {
+    if (value is SnapshotMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else 
-    if (value is VolumeMessage) {
+    if (value is SnapshotResponseMessage) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is TextureMessage) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is VolumeMessage) {
+      buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else 
 {
@@ -218,27 +270,33 @@ class _TencentVideoPlayerApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:       
-        return CreateMessage.decode(readValue(buffer)!);
+        return BackgroundPlayMessage.decode(readValue(buffer)!);
       
       case 129:       
-        return LoopingMessage.decode(readValue(buffer)!);
+        return CreateMessage.decode(readValue(buffer)!);
       
       case 130:       
-        return PlayMessage.decode(readValue(buffer)!);
+        return LoopingMessage.decode(readValue(buffer)!);
       
       case 131:       
-        return PlaybackSpeedMessage.decode(readValue(buffer)!);
+        return PlayMessage.decode(readValue(buffer)!);
       
       case 132:       
-        return PositionMessage.decode(readValue(buffer)!);
+        return PlaybackSpeedMessage.decode(readValue(buffer)!);
       
       case 133:       
-        return SnapshotMessage.decode(readValue(buffer)!);
+        return PositionMessage.decode(readValue(buffer)!);
       
       case 134:       
-        return TextureMessage.decode(readValue(buffer)!);
+        return SnapshotMessage.decode(readValue(buffer)!);
       
       case 135:       
+        return SnapshotResponseMessage.decode(readValue(buffer)!);
+      
+      case 136:       
+        return TextureMessage.decode(readValue(buffer)!);
+      
+      case 137:       
         return VolumeMessage.decode(readValue(buffer)!);
       
       default:      
@@ -465,7 +523,30 @@ class TencentVideoPlayerApi {
     }
   }
 
-  Future<SnapshotMessage> snapshot(TextureMessage arg_msg) async {
+  Future<void> setBackgroundPlay(BackgroundPlayMessage arg_msg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.TencentVideoPlayerApi.setBackgroundPlay', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object>[arg_msg]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<SnapshotResponseMessage> snapshot(SnapshotMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.TencentVideoPlayerApi.snapshot', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
@@ -484,7 +565,7 @@ class TencentVideoPlayerApi {
         details: error['details'],
       );
     } else {
-      return (replyMap['result'] as SnapshotMessage?)!;
+      return (replyMap['result'] as SnapshotResponseMessage?)!;
     }
   }
 

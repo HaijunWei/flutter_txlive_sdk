@@ -25,7 +25,9 @@ typedef NS_ENUM(NSUInteger, HJLiveType) {
 @class HJVolumeMessage;
 @class HJPlaybackSpeedMessage;
 @class HJPositionMessage;
+@class HJBackgroundPlayMessage;
 @class HJSnapshotMessage;
+@class HJSnapshotResponseMessage;
 
 @interface HJTextureMessage : NSObject
 @property(nonatomic, strong, nullable) NSNumber * textureId;
@@ -63,8 +65,20 @@ typedef NS_ENUM(NSUInteger, HJLiveType) {
 @property(nonatomic, strong, nullable) NSNumber * position;
 @end
 
+@interface HJBackgroundPlayMessage : NSObject
+@property(nonatomic, strong, nullable) NSNumber * textureId;
+@property(nonatomic, strong, nullable) NSNumber * backgroundPlay;
+@end
+
 @interface HJSnapshotMessage : NSObject
+@property(nonatomic, strong, nullable) NSNumber * textureId;
+@property(nonatomic, strong, nullable) NSNumber * portrait;
+@end
+
+@interface HJSnapshotResponseMessage : NSObject
 @property(nonatomic, copy, nullable) NSString * path;
+@property(nonatomic, strong, nullable) NSNumber * width;
+@property(nonatomic, strong, nullable) NSNumber * height;
 @end
 
 /// The codec used by HJTencentVideoPlayerApi.
@@ -80,7 +94,8 @@ NSObject<FlutterMessageCodec> *HJTencentVideoPlayerApiGetCodec(void);
 - (void)setLoopingMsg:(HJLoopingMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolumeMsg:(HJVolumeMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setPlaybackSpeedMsg:(HJPlaybackSpeedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)snapshotMsg:(nullable HJTextureMessage *)msg completion:(void(^)(HJSnapshotMessage *_Nullable, FlutterError *_Nullable))completion;
+- (void)setBackgroundPlayMsg:(HJBackgroundPlayMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)snapshotMsg:(nullable HJSnapshotMessage *)msg completion:(void(^)(HJSnapshotResponseMessage *_Nullable, FlutterError *_Nullable))completion;
 - (void)disposeMsg:(HJTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 

@@ -117,11 +117,26 @@ class PlatformVideoPlayer {
     );
   }
 
-  Future<String?> snapshot(int textureId) async {
-    final result = await _api.snapshot(
-      TextureMessage()..textureId = textureId,
+  Future<void> setBackgroundPlay(int textureId, bool backgroundPlay) {
+    return _api.setBackgroundPlay(
+      BackgroundPlayMessage()
+        ..textureId = textureId
+        ..backgroundPlay = backgroundPlay,
     );
-    return result.path;
+  }
+
+  Future<Map<String, dynamic>?> snapshot(int textureId, bool portrait) async {
+    final result = await _api.snapshot(
+      SnapshotMessage()
+        ..textureId = textureId
+        ..portrait = portrait,
+    );
+    if (result.path == null) return null;
+    return {
+      'path': result.path,
+      'width': result.width,
+      'height': result.height,
+    };
   }
 
   Future<void> dispose(int textureId) async {

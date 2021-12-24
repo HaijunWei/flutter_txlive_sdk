@@ -153,12 +153,12 @@
     }
 }
 
-- (void)snapshot:(void (^)(NSString *))completion {
+- (void)snapshot:(void (^)(NSString *, int width, int height))completion {
     UIImage *image = [self imageFromPixelBuffer:_lastBuffer];
     NSString *tempDir = NSTemporaryDirectory();
     tempDir = [tempDir stringByAppendingPathComponent:[NSString stringWithFormat:@"hj_video_player_%ld.png", (NSInteger)[[NSDate date] timeIntervalSince1970]]];
     [UIImagePNGRepresentation(image) writeToFile:tempDir atomically:YES];
-    completion(tempDir);
+    completion(tempDir, image.size.width, image.size.height);
 }
 
 #pragma mark - TXVideoCustomProcessDelegate
@@ -300,12 +300,13 @@
 @end
 
 
-@interface HJVideoPlayerPlugin () <HJTencentVideoPlayerApi>
+@interface HJVideoPlayerPlugin () <HJTencentVideoPlayerApi, FlutterApplicationLifeCycleDelegate>
 
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry>* registry;
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger>* messenger;
 @property(readonly, strong, nonatomic) NSMutableDictionary* players;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar>* registrar;
+@property(nonatomic, assign) BOOL backgroundPlay;
 
 @end
 
@@ -314,6 +315,7 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
     HJVideoPlayerPlugin* instance = [[HJVideoPlayerPlugin alloc] initWithRegistrar:registrar];
     [registrar publish:instance];
+    [registrar addApplicationDelegate:instance];
     HJTencentVideoPlayerApiSetup(registrar.messenger, instance);
 }
 
@@ -420,13 +422,29 @@
     [player setVolume:msg.volume.floatValue];
 }
 
-- (void)snapshotMsg:(HJTextureMessage *)msg completion:(void (^)(HJSnapshotMessage * _Nullable, FlutterError * _Nullable))completion {
+- (void)setBackgroundPlayMsg:(HJBackgroundPlayMessage *)msg error:(FlutterError * _Nullable __autoreleasing *)error {
+    self.backgroundPlay = msg.backgroundPlay;
+}
+
+- (void)snapshotMsg:(HJSnapshotMessage *)msg completion:(void (^)(HJSnapshotResponseMessage * _Nullable, FlutterError * _Nullable))completion {
     HJVideoPlayer* player = _players[msg.textureId];
-    [player snapshot:^(NSString *path) {
-        HJSnapshotMessage *message = [HJSnapshotMessage new];
+    [player snapshot:^(NSString *path, int width, int height) {
+        HJSnapshotResponseMessage *message = [HJSnapshotResponseMessage new];
         message.path = path;
+        message.width = @(width);
+        message.height = @(height);
         completion(message, nil);
     }];
+}
+
+
+#pragma mark -
+
+- (void)applicationWillResignActive:(UIApplication*)application {
+    if (self.backgroundPlay) {
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        [[AVAudioSession sharedInstance] setActive:YES error:nil];
+    }
 }
 
 @end

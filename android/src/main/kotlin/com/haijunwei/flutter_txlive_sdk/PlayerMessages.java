@@ -229,20 +229,86 @@ public class PlayerMessages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static class SnapshotMessage {
-    private String path;
-    public String getPath() { return path; }
-    public void setPath(String setterArg) { this.path = setterArg; }
+  public static class BackgroundPlayMessage {
+    private Long textureId;
+    public Long getTextureId() { return textureId; }
+    public void setTextureId(Long setterArg) { this.textureId = setterArg; }
+
+    private Boolean backgroundPlay;
+    public Boolean getBackgroundPlay() { return backgroundPlay; }
+    public void setBackgroundPlay(Boolean setterArg) { this.backgroundPlay = setterArg; }
 
     Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
-      toMapResult.put("path", path);
+      toMapResult.put("textureId", textureId);
+      toMapResult.put("backgroundPlay", backgroundPlay);
+      return toMapResult;
+    }
+    static BackgroundPlayMessage fromMap(Map<String, Object> map) {
+      BackgroundPlayMessage fromMapResult = new BackgroundPlayMessage();
+      Object textureId = map.get("textureId");
+      fromMapResult.textureId = (textureId == null) ? null : ((textureId instanceof Integer) ? (Integer)textureId : (Long)textureId);
+      Object backgroundPlay = map.get("backgroundPlay");
+      fromMapResult.backgroundPlay = (Boolean)backgroundPlay;
+      return fromMapResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class SnapshotMessage {
+    private Long textureId;
+    public Long getTextureId() { return textureId; }
+    public void setTextureId(Long setterArg) { this.textureId = setterArg; }
+
+    private Boolean portrait;
+    public Boolean getPortrait() { return portrait; }
+    public void setPortrait(Boolean setterArg) { this.portrait = setterArg; }
+
+    Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("textureId", textureId);
+      toMapResult.put("portrait", portrait);
       return toMapResult;
     }
     static SnapshotMessage fromMap(Map<String, Object> map) {
       SnapshotMessage fromMapResult = new SnapshotMessage();
+      Object textureId = map.get("textureId");
+      fromMapResult.textureId = (textureId == null) ? null : ((textureId instanceof Integer) ? (Integer)textureId : (Long)textureId);
+      Object portrait = map.get("portrait");
+      fromMapResult.portrait = (Boolean)portrait;
+      return fromMapResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class SnapshotResponseMessage {
+    private String path;
+    public String getPath() { return path; }
+    public void setPath(String setterArg) { this.path = setterArg; }
+
+    private Long width;
+    public Long getWidth() { return width; }
+    public void setWidth(Long setterArg) { this.width = setterArg; }
+
+    private Long height;
+    public Long getHeight() { return height; }
+    public void setHeight(Long setterArg) { this.height = setterArg; }
+
+    Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("path", path);
+      toMapResult.put("width", width);
+      toMapResult.put("height", height);
+      return toMapResult;
+    }
+    static SnapshotResponseMessage fromMap(Map<String, Object> map) {
+      SnapshotResponseMessage fromMapResult = new SnapshotResponseMessage();
       Object path = map.get("path");
       fromMapResult.path = (String)path;
+      Object width = map.get("width");
+      fromMapResult.width = (width == null) ? null : ((width instanceof Integer) ? (Integer)width : (Long)width);
+      Object height = map.get("height");
+      fromMapResult.height = (height == null) ? null : ((height instanceof Integer) ? (Integer)height : (Long)height);
       return fromMapResult;
     }
   }
@@ -258,27 +324,33 @@ public class PlayerMessages {
     protected Object readValueOfType(byte type, ByteBuffer buffer) {
       switch (type) {
         case (byte)128:         
-          return CreateMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return BackgroundPlayMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)129:         
-          return LoopingMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return CreateMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)130:         
-          return PlayMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return LoopingMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)131:         
-          return PlaybackSpeedMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return PlayMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)132:         
-          return PositionMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return PlaybackSpeedMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)133:         
-          return SnapshotMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return PositionMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)134:         
-          return TextureMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return SnapshotMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)135:         
+          return SnapshotResponseMessage.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)136:         
+          return TextureMessage.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)137:         
           return VolumeMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         default:        
@@ -288,36 +360,44 @@ public class PlayerMessages {
     }
     @Override
     protected void writeValue(ByteArrayOutputStream stream, Object value)     {
-      if (value instanceof CreateMessage) {
+      if (value instanceof BackgroundPlayMessage) {
         stream.write(128);
+        writeValue(stream, ((BackgroundPlayMessage) value).toMap());
+      } else 
+      if (value instanceof CreateMessage) {
+        stream.write(129);
         writeValue(stream, ((CreateMessage) value).toMap());
       } else 
       if (value instanceof LoopingMessage) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, ((LoopingMessage) value).toMap());
       } else 
       if (value instanceof PlayMessage) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((PlayMessage) value).toMap());
       } else 
       if (value instanceof PlaybackSpeedMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((PlaybackSpeedMessage) value).toMap());
       } else 
       if (value instanceof PositionMessage) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PositionMessage) value).toMap());
       } else 
       if (value instanceof SnapshotMessage) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((SnapshotMessage) value).toMap());
       } else 
+      if (value instanceof SnapshotResponseMessage) {
+        stream.write(135);
+        writeValue(stream, ((SnapshotResponseMessage) value).toMap());
+      } else 
       if (value instanceof TextureMessage) {
-        stream.write(134);
+        stream.write(136);
         writeValue(stream, ((TextureMessage) value).toMap());
       } else 
       if (value instanceof VolumeMessage) {
-        stream.write(135);
+        stream.write(137);
         writeValue(stream, ((VolumeMessage) value).toMap());
       } else 
 {
@@ -337,7 +417,8 @@ public class PlayerMessages {
     void setLooping(LoopingMessage msg);
     void setVolume(VolumeMessage msg);
     void setPlaybackSpeed(PlaybackSpeedMessage msg);
-    void snapshot(TextureMessage msg, Result<SnapshotMessage> result);
+    void setBackgroundPlay(BackgroundPlayMessage msg);
+    void snapshot(SnapshotMessage msg, Result<SnapshotResponseMessage> result);
     void dispose(TextureMessage msg);
 
     /** The codec used by TencentVideoPlayerApi. */
@@ -565,18 +646,42 @@ public class PlayerMessages {
       }
       {
         BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.TencentVideoPlayerApi.setBackgroundPlay", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              ArrayList<Object> args = (ArrayList<Object>)message;
+              BackgroundPlayMessage msgArg = (BackgroundPlayMessage)args.get(0);
+              if (msgArg == null) {
+                throw new NullPointerException("msgArg unexpectedly null.");
+              }
+              api.setBackgroundPlay(msgArg);
+              wrapped.put("result", null);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.TencentVideoPlayerApi.snapshot", getCodec());
         if (api != null) {
           channel.setMessageHandler((message, reply) -> {
             Map<String, Object> wrapped = new HashMap<>();
             try {
               ArrayList<Object> args = (ArrayList<Object>)message;
-              TextureMessage msgArg = (TextureMessage)args.get(0);
+              SnapshotMessage msgArg = (SnapshotMessage)args.get(0);
               if (msgArg == null) {
                 throw new NullPointerException("msgArg unexpectedly null.");
               }
-              Result<SnapshotMessage> resultCallback = new Result<SnapshotMessage>() {
-                public void success(SnapshotMessage result) {
+              Result<SnapshotResponseMessage> resultCallback = new Result<SnapshotResponseMessage>() {
+                public void success(SnapshotResponseMessage result) {
                   wrapped.put("result", result);
                   reply.reply(wrapped);
                 }

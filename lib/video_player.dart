@@ -121,6 +121,8 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
 
   bool _isDisposed = false;
   bool _autoPlay = false;
+  bool _backgroundPlay = false;
+  bool get backgroundPlay => _backgroundPlay;
   Duration? _initializedPosition;
 
   VideoDataSource? _dataSource;
@@ -274,8 +276,13 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
     value = value.copyWith(playbackSpeed: speed);
   }
 
-  Future<String?> snapshot() {
-    return _platformVideoPlayer.snapshot(textureId);
+  Future<void> setBackgroundPlay(bool backgroundPlay) async {
+    _backgroundPlay = backgroundPlay;
+    _platformVideoPlayer.setBackgroundPlay(textureId, backgroundPlay);
+  }
+
+  Future<Map<String, dynamic>?> snapshot({bool portrait = false}) {
+    return _platformVideoPlayer.snapshot(textureId, portrait);
   }
 
   @override
@@ -306,6 +313,7 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_controller.backgroundPlay) return;
     switch (state) {
       case AppLifecycleState.paused:
         _wasPlayingBeforePause = _controller.value.isPlaying;

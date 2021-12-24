@@ -5,6 +5,7 @@ import static com.haijunwei.flutter_txlive_sdk.PlayerMessages.*;
 import android.content.Context;
 import android.util.Log;
 import android.util.LongSparseArray;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 
@@ -148,17 +149,20 @@ public class HJVideoPlayerPlugin implements FlutterPlugin, ActivityAware, Tencen
     player.setPlaybackSpeed(msg.getSpeed().floatValue());
   }
 
+
   @Override
-  public void snapshot(TextureMessage msg, PlayerMessages.Result<SnapshotMessage> result) {
+  public void snapshot(SnapshotMessage msg, Result<SnapshotResponseMessage> result) {
     HJVideoPlayer player = players.get(msg.getTextureId());
     player.snapshot(new HJVideoPlayer.IVideoSnapshotListener() {
       @Override
-      public void onSnapshot(String path) {
-        SnapshotMessage message = new SnapshotMessage();
+      public void onSnapshot(String path, int width, int height) {
+        SnapshotResponseMessage message = new SnapshotResponseMessage();
         message.setPath(path);
+        message.setWidth((long)width);
+        message.setHeight((long)height);
         result.success(message);
       }
-    });
+    }, msg.getPortrait());
   }
 
   @Override

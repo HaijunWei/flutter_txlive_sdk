@@ -1,7 +1,7 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/player_messages.dart',
+  dartOut: 'lib/src/player_messages.dart',
   objcHeaderOut: 'ios/Classes/PlayerMessages.h',
   objcSourceOut: 'ios/Classes/PlayerMessages.m',
   objcOptions: ObjcOptions(prefix: 'HJ'),
@@ -49,8 +49,20 @@ class PositionMessage {
   late int position;
 }
 
+class BackgroundPlayMessage {
+  late int textureId;
+  late bool backgroundPlay;
+}
+
 class SnapshotMessage {
+  late int textureId;
+  late bool portrait;
+}
+
+class SnapshotResponseMessage {
   late String path;
+  late int width;
+  late int height;
 }
 
 @HostApi()
@@ -64,7 +76,8 @@ abstract class TencentVideoPlayerApi {
   void setLooping(LoopingMessage msg);
   void setVolume(VolumeMessage msg);
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
+  void setBackgroundPlay(BackgroundPlayMessage msg);
   @async
-  SnapshotMessage snapshot(TextureMessage msg);
+  SnapshotResponseMessage snapshot(SnapshotMessage msg);
   void dispose(TextureMessage msg);
 }
