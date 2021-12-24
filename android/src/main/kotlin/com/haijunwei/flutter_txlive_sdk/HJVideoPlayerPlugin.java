@@ -149,6 +149,10 @@ public class HJVideoPlayerPlugin implements FlutterPlugin, ActivityAware, Tencen
     player.setPlaybackSpeed(msg.getSpeed().floatValue());
   }
 
+  @Override
+  public void setBackgroundPlay(BackgroundPlayMessage msg) {
+
+  }
 
   @Override
   public void snapshot(SnapshotMessage msg, Result<SnapshotResponseMessage> result) {
