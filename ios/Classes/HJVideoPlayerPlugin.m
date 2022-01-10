@@ -5,7 +5,7 @@
 #import <TXLiteAVSDK_Professional/TXVodPlayer.h>
 #import <TXLiteAVSDK_Professional/TXLivePlayer.h>
 
-@interface HJVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler, TXVideoCustomProcessDelegate, TXLivePlayListener, TXVodPlayListener>
+@interface HJVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler, TXVideoCustomProcessDelegate, TXLivePlayListener, TXVodPlayListener, V2TXLivePlayerObserver>
 
 @property(nonatomic) int64_t textureId;
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry>* registry;
@@ -423,7 +423,7 @@
 }
 
 - (void)setBackgroundPlayMsg:(HJBackgroundPlayMessage *)msg error:(FlutterError * _Nullable __autoreleasing *)error {
-    self.backgroundPlay = msg.backgroundPlay;
+    self.backgroundPlay = [msg.backgroundPlay boolValue];
 }
 
 - (void)snapshotMsg:(HJSnapshotMessage *)msg completion:(void (^)(HJSnapshotResponseMessage * _Nullable, FlutterError * _Nullable))completion {
