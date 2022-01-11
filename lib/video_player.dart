@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'src/player_messages.dart';
+
 import 'src/platform_video_player.dart';
+import 'src/player_messages.dart';
 
 export 'src/player_messages.dart';
 
@@ -83,6 +85,11 @@ class HJVideoPlayerValue {
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       errorDescription: errorDescription ?? this.errorDescription,
     );
+  }
+
+  @override
+  String toString() {
+    return 'HJVideoPlayerValue(isPlaying: $isPlaying, isStop: $isStop, isLoading: $isLoading, isReady: $isReady, duration: $duration, position: $position, buffered: $buffered, size: $size, playbackSpeed: $playbackSpeed, errorDescription: $errorDescription)';
   }
 }
 
@@ -257,6 +264,7 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
   }
 
   Future<void> seekTo(int position) async {
+    if (type == PlayerType.live) return;
     value = value.copyWith(
       position: Duration(seconds: position),
     );
@@ -264,6 +272,7 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
   }
 
   Future<void> setLooping(bool isLooping) async {
+    if (type == PlayerType.live) return;
     await _platformVideoPlayer.setLooping(textureId, isLooping);
   }
 
@@ -272,6 +281,7 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
   }
 
   Future<void> setPlaybackSpeed(double speed) async {
+    if (type == PlayerType.live) return;
     await _platformVideoPlayer.setPlaybackSpeed(textureId, speed);
     value = value.copyWith(playbackSpeed: speed);
   }
