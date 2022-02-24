@@ -212,24 +212,15 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
     void snapshot(IVideoSnapshotListener listener, Boolean portrait) {
         View cv = activity.getWindow().getDecorView();
         long time = System.currentTimeMillis();
-        int width = 0;
-        int height = 0;
-        if (portrait) {
-            width = cv.getHeight();
-            height = cv.getWidth();
-        } else {
-            width = cv.getWidth();
-            height = cv.getHeight();
-        }
+        int width = mSurfaceWidth;
+        int height = mSurfaceHeight;
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        Log.d("Haijun",  "----1   " + (System.currentTimeMillis() - time) + "");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             int finalWidth = width;
             int finalHeight = height;
             PixelCopy.request(surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
                 @Override
                 public void onPixelCopyFinished(int i) {
-                    Log.d("Haijun",  "----2   " + (System.currentTimeMillis() - time) + "");
                     String filename = "hj_video_player_" + System.currentTimeMillis() + ".png";
                     File file = new File(activity.getCacheDir(), filename);
                     new Thread(){
@@ -237,7 +228,6 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
                         public void run() {
                             try {
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
-                                Log.d("Haijun",  "----3   " + (System.currentTimeMillis() - time) + "");
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -279,6 +269,8 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
                 event.put("event", "resolutionUpdate");
                 event.put("width", bundle.get("EVT_PARAM1"));
                 event.put("height", bundle.get("EVT_PARAM2"));
+                mSurfaceWidth = (int)bundle.get("EVT_PARAM1");
+                mSurfaceHeight = (int) bundle.get("EVT_PARAM2");
                 eventSink.success(event);
                 break;
             }
@@ -313,6 +305,8 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
                 event.put("event", "resolutionUpdate");
                 event.put("width", bundle.get("EVT_PARAM1"));
                 event.put("height", bundle.get("EVT_PARAM2"));
+                mSurfaceWidth = (int)bundle.get("EVT_PARAM1");
+                mSurfaceHeight = (int) bundle.get("EVT_PARAM2");
                 eventSink.success(event);
                 break;
             }
