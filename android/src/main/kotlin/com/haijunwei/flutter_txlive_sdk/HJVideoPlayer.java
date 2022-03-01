@@ -56,6 +56,7 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
     private Timer timer = new Timer();
 
     private int mSurfaceWidth, mSurfaceHeight = 0;
+    private int videoWidth, videoHeight = 0;
 
     public HJVideoPlayer(PlayerMessages.PlayerType type,
                          EventChannel eventChannel,
@@ -212,8 +213,8 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
     void snapshot(IVideoSnapshotListener listener, Boolean portrait) {
         View cv = activity.getWindow().getDecorView();
         long time = System.currentTimeMillis();
-        int width = mSurfaceWidth;
-        int height = mSurfaceHeight;
+        int width = videoWidth;
+        int height = videoHeight;
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             int finalWidth = width;
@@ -256,7 +257,7 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
 
     @Override
     public void onPlayEvent(int i, Bundle bundle) {
-        Log.d(TAG, "onPlayEvent" + i + bundle.toString());
+        Log.d(TAG, "--- onPlayEvent" + i + bundle.toString());
         switch (i) {
             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN: {
                 Map<String, Object> event = new HashMap<>();
@@ -269,9 +270,9 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
                 event.put("event", "resolutionUpdate");
                 event.put("width", bundle.get("EVT_PARAM1"));
                 event.put("height", bundle.get("EVT_PARAM2"));
-                mSurfaceWidth = (int)bundle.get("EVT_PARAM1");
-                mSurfaceHeight = (int) bundle.get("EVT_PARAM2");
                 eventSink.success(event);
+                videoWidth = (int)bundle.get("EVT_PARAM1");
+                videoHeight = (int)bundle.get("EVT_PARAM2");
                 break;
             }
             case TXLiveConstants.PLAY_ERR_NET_DISCONNECT: {
@@ -305,9 +306,9 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
                 event.put("event", "resolutionUpdate");
                 event.put("width", bundle.get("EVT_PARAM1"));
                 event.put("height", bundle.get("EVT_PARAM2"));
-                mSurfaceWidth = (int)bundle.get("EVT_PARAM1");
-                mSurfaceHeight = (int) bundle.get("EVT_PARAM2");
                 eventSink.success(event);
+                videoWidth = (int)bundle.get("EVT_PARAM1");
+                videoHeight = (int) bundle.get("EVT_PARAM2");
                 break;
             }
             case TXLiveConstants.PLAY_EVT_PLAY_PROGRESS: {
