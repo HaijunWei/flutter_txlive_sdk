@@ -101,15 +101,12 @@
 - (void)startPlayWithURL:(NSString *)url liveType:(HJLiveType)type {
     if (self.type == HJPlayerTypeVod) {
         [self.vodPlayer seek:0];
-//        [self.vodPlayer startPlay:url];
         [self.vodPlayer startVodPlay:url];
     } else {
         self.needGetResolution = true;
         if (type == HJLiveTypeRtmp) {
-//            [self.livePlayer startPlay:url type:PLAY_TYPE_LIVE_RTMP];
             [self.livePlayer startLivePlay:url type:PLAY_TYPE_LIVE_RTMP];
         } else {
-            //            [self.livePlayer startPlay:url type:PLAY_TYPE_LIVE_FLV];
             [self.livePlayer startLivePlay:url type:PLAY_TYPE_LIVE_FLV];
         }
     }

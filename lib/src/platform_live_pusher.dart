@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_txlive_sdk/src/live_pusher_messages.dart';
 
 class PlatformLivePusher {

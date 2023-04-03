@@ -9,14 +9,17 @@ import io.flutter.plugin.common.MethodChannel
 
 /** FlutterTxliveSdkPlugin */
 class FlutterTxliveSdkPlugin : FlutterPlugin, ActivityAware {
+    private var basePlugin: HJLiveBasePlugin = HJLiveBasePlugin()
     private var playerPlugin: HJVideoPlayerPlugin = HJVideoPlayerPlugin()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        basePlugin.onAttachedToEngine(flutterPluginBinding)
         playerPlugin.onAttachedToEngine(flutterPluginBinding)
     }
 
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        basePlugin.onDetachedFromEngine(binding)
         playerPlugin.onDetachedFromEngine(binding)
     }
 

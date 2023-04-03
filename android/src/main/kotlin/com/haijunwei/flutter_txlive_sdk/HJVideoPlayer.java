@@ -152,12 +152,12 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
     void startPlay(String url, PlayerMessages.LiveType type) {
         if (this.type == PlayerMessages.PlayerType.vod) {
             vodPlayer.seek(0);
-            vodPlayer.startPlay(url);
+            vodPlayer.startVodPlay(url);
         } else {
             if (type == PlayerMessages.LiveType.rtmp) {
-                livePlayer.startPlay(url, PLAY_TYPE_LIVE_RTMP);
+                livePlayer.startLivePlay(url, PLAY_TYPE_LIVE_RTMP);
             } else {
-                livePlayer.startPlay(url, PLAY_TYPE_LIVE_FLV);
+                livePlayer.startLivePlay(url, PLAY_TYPE_LIVE_FLV);
             }
         }
     }
