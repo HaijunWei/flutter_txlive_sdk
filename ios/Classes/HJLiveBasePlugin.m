@@ -5,13 +5,13 @@
 //  Created by haijun on 2023/4/3.
 //
 
-#import "LiveBasePlugin.h"
+#import "HJLiveBasePlugin.h"
 #import <TXLiteAVSDK_Professional/TXLiveBase.h>
 
-@implementation LiveBasePlugin
+@implementation HJLiveBasePlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-    LiveBasePlugin* instance = [LiveBasePlugin new];
+    HJLiveBasePlugin* instance = [HJLiveBasePlugin new];
     [registrar publish:instance];
     HJLiveBaseApiSetup(registrar.messenger, instance);
 }
