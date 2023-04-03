@@ -30,8 +30,8 @@
 
 
 - (void)startPush:(NSString *)url {
-    int code = [_pusher startPush:url];
-    NSLog(@"开始推流 %d", code);
+    V2TXLiveCode code = [_pusher startPush:url];
+    NSLog(@"开始推流 %ld", code);
 }
 
 - (void)stopPush {

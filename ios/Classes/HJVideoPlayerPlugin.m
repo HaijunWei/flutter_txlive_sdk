@@ -2,8 +2,10 @@
 #import "HJVideoPlayerPlugin.h"
 #import <stdatomic.h>
 #import <libkern/OSAtomic.h>
+#import <AVFAudio/AVFAudio.h>
 #import <TXLiteAVSDK_Professional/TXVodPlayer.h>
 #import <TXLiteAVSDK_Professional/TXLivePlayer.h>
+#import <TXLiteAVSDK_Professional/V2TXLivePlayerObserver.h>
 
 @interface HJVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler, TXVideoCustomProcessDelegate, TXLivePlayListener, TXVodPlayListener, V2TXLivePlayerObserver>
 
@@ -99,13 +101,16 @@
 - (void)startPlayWithURL:(NSString *)url liveType:(HJLiveType)type {
     if (self.type == HJPlayerTypeVod) {
         [self.vodPlayer seek:0];
-        [self.vodPlayer startPlay:url];
+//        [self.vodPlayer startPlay:url];
+        [self.vodPlayer startVodPlay:url];
     } else {
         self.needGetResolution = true;
         if (type == HJLiveTypeRtmp) {
-            [self.livePlayer startPlay:url type:PLAY_TYPE_LIVE_RTMP];
+//            [self.livePlayer startPlay:url type:PLAY_TYPE_LIVE_RTMP];
+            [self.livePlayer startLivePlay:url type:PLAY_TYPE_LIVE_RTMP];
         } else {
-            [self.livePlayer startPlay:url type:PLAY_TYPE_LIVE_FLV];
+            //            [self.livePlayer startPlay:url type:PLAY_TYPE_LIVE_FLV];
+            [self.livePlayer startLivePlay:url type:PLAY_TYPE_LIVE_FLV];
         }
     }
 }
@@ -279,6 +284,25 @@
         default:
             break;
         }
+}
+
+- (void)onPlayer:(TXVodPlayer *)player airPlayErrorDidOccur:(TX_VOD_PLAYER_AIRPLAY_ERROR_TYPE)errorType withParam:(NSDictionary *)param {
+    
+}
+
+
+- (void)onPlayer:(TXVodPlayer *)player airPlayStateDidChange:(TX_VOD_PLAYER_AIRPLAY_STATE)airPlayState withParam:(NSDictionary *)param { 
+    
+}
+
+
+- (void)onPlayer:(TXVodPlayer *)player pictureInPictureErrorDidOccur:(TX_VOD_PLAYER_PIP_ERROR_TYPE)errorType withParam:(NSDictionary *)param { 
+    
+}
+
+
+- (void)onPlayer:(TXVodPlayer *)player pictureInPictureStateDidChange:(TX_VOD_PLAYER_PIP_STATE)pipState withParam:(NSDictionary *)param {
+    
 }
 
 #pragma mark - Helpers
