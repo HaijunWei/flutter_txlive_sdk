@@ -237,11 +237,16 @@
 }
 
 - (void)onNetStatus:(TXVodPlayer *)player withParam:(NSDictionary *)param {
-//    NSLog(@"--- param %@", param);
+//    NSLog(@"--- onNetStatus %@", param);
 }
 
 - (void)onPlayEvent:(TXVodPlayer *)player event:(int)EvtID withParam:(NSDictionary *)param {
-//    NSLog(@"--- evtId %d，param %@", EvtID, param);
+//    NSLog(@"--- onPlayEvent evtId %d", EvtID);
+//    NSLog(@"--- onPlayEvent evtId %d，param %@", EvtID, param);
+    if (EvtID == -6003) {
+        self
+        NSLog(@"--- onPlayEvent evtId %d，param %@", EvtID, param);
+    }
     switch (EvtID) {
         case PLAY_EVT_RCV_FIRST_I_FRAME:
             [player pause];
@@ -252,7 +257,6 @@
             }
             break;
         case PLAY_EVT_CHANGE_RESOLUTION: //视频分辨率发生变化（分辨率在 EVT_PARAM 参数中）
-            NSLog(@"--- evtId %d，param %@", EvtID, param);
             if (self.eventSink != nil) {
                 self.eventSink(@{
                     @"event": @"resolutionUpdate",
@@ -276,6 +280,11 @@
         case PLAY_EVT_PLAY_END:
             if (self.eventSink != nil) {
                 self.eventSink(@{@"event": @"ended"});
+            }
+            break;
+        case -6003:
+            if (self.eventSink != nil) {
+                self.eventSink(@{@"event": @"failedToLoad"});
             }
             break;
         default:

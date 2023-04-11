@@ -19,6 +19,7 @@ public class HJLiveBasePlugin implements FlutterPlugin, LiveBaseApi {
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         mFlutterPluginBinding = binding;
+        LiveBaseApi.setup(binding.getBinaryMessenger(), this);
     }
 
     @Override

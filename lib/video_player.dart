@@ -15,6 +15,7 @@ class HJVideoPlayerValue {
     this.isPlaying = false,
     this.isStop = false,
     this.isLoading = false,
+    this.isFailedToLoad = false,
     this.isReady = false,
     required this.duration,
     this.position = Duration.zero,
@@ -37,7 +38,11 @@ class HJVideoPlayerValue {
   /// 视频已停止播放
   final bool isStop;
 
+  /// 是否加载中
   final bool isLoading;
+
+  /// 是否加载/缓冲失败，已停止播放
+  final bool isFailedToLoad;
 
   /// 视频是否已经加载成功，可以播放了
   final bool isReady;
@@ -65,6 +70,7 @@ class HJVideoPlayerValue {
     bool? isPlaying,
     bool? isStop,
     bool? isLoading,
+    bool? isFailedToLoad,
     bool? isReady,
     Duration? duration,
     Duration? position,
@@ -77,6 +83,7 @@ class HJVideoPlayerValue {
       isPlaying: isPlaying ?? this.isPlaying,
       isStop: isStop ?? this.isStop,
       isLoading: isLoading ?? this.isLoading,
+      isFailedToLoad: isFailedToLoad ?? this.isFailedToLoad,
       isReady: isReady ?? this.isReady,
       duration: duration ?? this.duration,
       position: position ?? this.position,
@@ -89,7 +96,7 @@ class HJVideoPlayerValue {
 
   @override
   String toString() {
-    return 'HJVideoPlayerValue(isPlaying: $isPlaying, isStop: $isStop, isLoading: $isLoading, isReady: $isReady, duration: $duration, position: $position, buffered: $buffered, size: $size, playbackSpeed: $playbackSpeed, errorDescription: $errorDescription)';
+    return 'HJVideoPlayerValue(isPlaying: $isPlaying, isStop: $isStop, isLoading: $isLoading, isFailedToLoad: $isFailedToLoad, isReady: $isReady, duration: $duration, position: $position, buffered: $buffered, size: $size, playbackSpeed: $playbackSpeed, errorDescription: $errorDescription)';
   }
 }
 
@@ -154,17 +161,19 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
       switch (event.eventType) {
         case VideoEventType.ready:
           // 卡顿后恢复播放也会调用此消息
-          if (value.isReady) return;
+          if (value.isReady) {
+            value = value.copyWith(isFailedToLoad: false);
+            break;
+          }
           value = value.copyWith(
             isReady: true,
             isLoading: false,
+            isFailedToLoad: false,
           );
           if (_initializedPosition != null) {
             seekTo(_initializedPosition!.inSeconds);
           }
-          if (_autoPlay) {
-            resume();
-          }
+          if (_autoPlay) resume();
           break;
         case VideoEventType.resolutionUpdate:
           if (value.isStop) break;
@@ -181,8 +190,12 @@ class HJVideoPlayerController extends ValueNotifier<HJVideoPlayerValue> {
           );
           break;
         case VideoEventType.ended:
-          if (value.isStop) break;
-          stop();
+          if (!value.isStop) stop();
+          break;
+        case VideoEventType.failedToLoad:
+          value = value.copyWith(
+            isFailedToLoad: true,
+          );
           break;
         case VideoEventType.unknown:
           break;

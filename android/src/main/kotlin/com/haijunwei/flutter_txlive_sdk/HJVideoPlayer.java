@@ -326,6 +326,12 @@ public class HJVideoPlayer implements ITXLivePlayListener, ITXVodPlayListener {
                 eventSink.success(event);
                 break;
             }
+            case -6003: {
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "failedToLoad");
+                eventSink.success(event);
+                break;
+            }
             default:
                 break;
         }

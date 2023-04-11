@@ -39,6 +39,9 @@ enum VideoEventType {
   /// 视频播放已结束
   ended,
 
+  /// 视频加载\缓冲失败
+  failedToLoad,
+
   /// unknown
   unknown,
 }
@@ -172,6 +175,8 @@ class PlatformVideoPlayer {
           );
         case 'ended':
           return VideoEvent(eventType: VideoEventType.ended);
+        case 'failedToLoad':
+          return VideoEvent(eventType: VideoEventType.failedToLoad);
         default:
           return VideoEvent(eventType: VideoEventType.unknown);
       }
