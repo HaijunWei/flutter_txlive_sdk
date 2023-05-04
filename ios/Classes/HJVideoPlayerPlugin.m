@@ -157,6 +157,10 @@
 
 - (void)snapshot:(void (^)(NSString *, int width, int height))completion {
     UIImage *image = [self imageFromPixelBuffer:_lastBuffer];
+    if (image == nil) {
+        completion(@"", 0, 0);
+        return;
+    }
     NSString *tempDir = NSTemporaryDirectory();
     tempDir = [tempDir stringByAppendingPathComponent:[NSString stringWithFormat:@"hj_video_player_%ld.png", (NSInteger)[[NSDate date] timeIntervalSince1970]]];
     [UIImagePNGRepresentation(image) writeToFile:tempDir atomically:YES];
@@ -243,10 +247,6 @@
 - (void)onPlayEvent:(TXVodPlayer *)player event:(int)EvtID withParam:(NSDictionary *)param {
 //    NSLog(@"--- onPlayEvent evtId %d", EvtID);
 //    NSLog(@"--- onPlayEvent evtId %d，param %@", EvtID, param);
-    if (EvtID == -6003) {
-        self
-        NSLog(@"--- onPlayEvent evtId %d，param %@", EvtID, param);
-    }
     switch (EvtID) {
         case PLAY_EVT_RCV_FIRST_I_FRAME:
             [player pause];
@@ -318,6 +318,7 @@
 }
 
 - (UIImage *)imageFromPixelBuffer:(CVPixelBufferRef)pixelBufferRef {
+    if (pixelBufferRef == NULL) return nil;
     CIImage *ciImage = [CIImage imageWithCVPixelBuffer:pixelBufferRef];
 
     CIContext *temporaryContext = [CIContext contextWithOptions:nil];
